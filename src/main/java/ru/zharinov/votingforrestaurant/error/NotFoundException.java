@@ -1,7 +1,0 @@
-package ru.zharinov.votingforrestaurant.error;
-
-public class NotFoundException extends AppException {
-    public NotFoundException(String msg) {
-        super(msg);
-    }
-}
