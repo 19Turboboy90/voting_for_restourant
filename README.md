@@ -26,4 +26,8 @@ P.P.S.: Assume that your API will be used by a frontend developer to build front
 
 ## Technology stack
 
-**Spring Boot / Spring Data JPA / H2 database / Spring Security / Jackson / Caffeine cache  / Spring Validation / Lombok / Spring Tests / Swagger**
+**Spring Boot / Spring Data JPA / H2 database / Spring Security / Jackson / Spring Validation / Lombok / Spring Tests / Lombok / Swagger**
+
+## Model Project
+
+![modelProject.jpg](modelProject.jpg)
