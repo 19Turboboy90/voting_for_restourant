@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "dish", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_id","dish_date","name"}, name = "dish_unique_restaurant_name_dish_date")})
+@Table(name = "dish", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "dish_date", "restaurant_id",}, name = "dish_unique_restaurant_name_dish_date")})
 public class Dish extends NamedEntity {
     @Column(name = "price", nullable = false)
     private double price;

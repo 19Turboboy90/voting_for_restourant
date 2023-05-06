@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping(value = RestaurantController.URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestaurantController {
-    static final String URL = "/rest/restaurants";
+    static final String URL = "/api/restaurants";
 
     private final RestaurantRepository repository;
 
@@ -33,14 +33,14 @@ public class RestaurantController {
     @GetMapping("/{id}/with-dish")
     public ResponseEntity<Restaurant> getWithMenu(@PathVariable int id) {
         log.info("get restaurant {} with dish", id);
-        return ResponseEntity.of(repository.getWithMenu(id));
+        return ResponseEntity.of(repository.getRestaurantWithMenu(id));
     }
 
     @GetMapping("/with-dish")
     @Cacheable("restaurantsWithDish")
     public List<Restaurant> getAllWithMenu() {
         log.info("get restaurants with dish");
-        return repository.getAllWithMenu();
+        return repository.getAllRestaurantsWithMenu();
     }
 
     @GetMapping

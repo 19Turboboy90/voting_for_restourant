@@ -30,7 +30,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping(value = VoteController.URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class VoteController {
-    static final String URL = "/rest/votes";
+    static final String URL = "/api/votes";
     private final VoteService voteService;
     private final VoteRepository repository;
 

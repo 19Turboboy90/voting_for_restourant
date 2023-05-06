@@ -28,7 +28,7 @@ import static ru.project.graduation.zharinov.votingforrestaurant.util.validation
 @AllArgsConstructor
 @RequestMapping(value = AdminDishController.URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminDishController {
-    static final String URL = "/rest/admin/restaurants";
+    static final String URL = "/api/admin/restaurants";
     private final DishRepository repository;
 
     private final DishService service;
