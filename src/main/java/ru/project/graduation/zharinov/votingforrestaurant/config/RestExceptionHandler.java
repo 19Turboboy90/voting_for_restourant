@@ -34,6 +34,7 @@ import java.util.Optional;
 
 import static ru.project.graduation.zharinov.votingforrestaurant.error.ErrorType.*;
 
+
 @RestControllerAdvice
 @AllArgsConstructor
 @Slf4j

@@ -6,9 +6,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
-import ru.project.graduation.zharinov.votingforrestaurant.repository.UserRepository;
 import ru.project.graduation.zharinov.votingforrestaurant.HasIdAndEmail;
+import ru.project.graduation.zharinov.votingforrestaurant.repository.UserRepository;
 import ru.project.graduation.zharinov.votingforrestaurant.web.AuthUser;
+
 
 @Component
 @AllArgsConstructor

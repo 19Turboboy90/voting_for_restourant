@@ -14,9 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import ru.project.graduation.zharinov.votingforrestaurant.repository.UserRepository;
 import ru.project.graduation.zharinov.votingforrestaurant.model.Role;
 import ru.project.graduation.zharinov.votingforrestaurant.model.User;
+import ru.project.graduation.zharinov.votingforrestaurant.repository.UserRepository;
 import ru.project.graduation.zharinov.votingforrestaurant.web.AuthUser;
 
 import java.util.Optional;

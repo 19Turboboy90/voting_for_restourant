@@ -4,10 +4,6 @@ import lombok.experimental.UtilityClass;
 import ru.project.graduation.zharinov.votingforrestaurant.HasId;
 import ru.project.graduation.zharinov.votingforrestaurant.error.IllegalRequestDataException;
 
-import java.time.LocalTime;
-
-import static ru.project.graduation.zharinov.votingforrestaurant.util.DateTimeUtil.VOTE_TIME;
-
 @UtilityClass
 public class ValidationUtil {
 
@@ -26,22 +22,8 @@ public class ValidationUtil {
         }
     }
 
-    public static void checkModification(int count, int id) {
-        if (count == 0) {
-            throw new IllegalRequestDataException("Entity with id=" + id + " not found");
-        }
-    }
-
-    public static <T> T checkExisted(T obj, int id) {
-        if (obj == null) {
-            throw new IllegalRequestDataException("Entity with id=" + id + " not found");
-        }
-        return obj;
-    }
-
-    public static void checkTime(LocalTime localTime) {
-        if (!localTime.isBefore(VOTE_TIME)) {
-            throw new IllegalRequestDataException("It's too late to change the vote today. PLease try tomorrow");
-        }
+    public static <T> T checkNotFound(T object, String msg) {
+        checkNotFound(object != null, msg);
+        return object;
     }
 }

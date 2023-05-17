@@ -1,4 +1,4 @@
-package ru.zharinov.votingforrestaurant.model;
+package ru.project.graduation.zharinov.votingforrestaurant.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

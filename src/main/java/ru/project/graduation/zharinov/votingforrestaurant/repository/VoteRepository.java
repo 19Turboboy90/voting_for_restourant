@@ -1,12 +1,11 @@
-package ru.zharinov.votingforrestaurant.repository;
+package ru.project.graduation.zharinov.votingforrestaurant.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import ru.zharinov.votingforrestaurant.model.Vote;
+import ru.project.graduation.zharinov.votingforrestaurant.model.Vote;
 
 import java.util.List;
-
 
 @Transactional(readOnly = true)
 public interface VoteRepository extends BaseRepository<Vote> {

@@ -1,83 +1,93 @@
 package ru.project.graduation.zharinov.votingforrestaurant.web.vote;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.project.graduation.zharinov.votingforrestaurant.error.DataConflictException;
 import ru.project.graduation.zharinov.votingforrestaurant.model.Vote;
-import ru.project.graduation.zharinov.votingforrestaurant.repository.VoteRepository;
-import ru.project.graduation.zharinov.votingforrestaurant.service.VoteService;
-import ru.project.graduation.zharinov.votingforrestaurant.to.VoteTo;
-import ru.project.graduation.zharinov.votingforrestaurant.util.DateTimeUtil;
-import ru.project.graduation.zharinov.votingforrestaurant.util.VoteUtil;
-import ru.project.graduation.zharinov.votingforrestaurant.util.validation.ValidationUtil;
-import ru.project.graduation.zharinov.votingforrestaurant.web.AuthUser;
+import ru.project.graduation.zharinov.votingforrestaurant.service.VoteServiceImpl;
 
-import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @Slf4j
-@AllArgsConstructor
-@RequestMapping(value = VoteController.URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class VoteController {
-    static final String URL = "/api/votes";
-    private final VoteService voteService;
-    private final VoteRepository repository;
+    public static final String REST_URL = "/api/votes";
 
-    @GetMapping("/{id}")
-    public VoteTo get(@AuthenticationPrincipal AuthUser authUser, @PathVariable int id) {
-        log.info("get vote {} for user {}", id, authUser.id());
-        return VoteUtil.createTo(repository.checkBelong(id, authUser.id()));
+    private final VoteServiceImpl voteService;
+
+    @Autowired
+    public VoteController(VoteServiceImpl voteService) {
+        this.voteService = voteService;
     }
 
     @GetMapping
-    public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
-        log.info("getAll votes");
-        return VoteUtil.getTos(repository.getAll(authUser.id()));
+    public ResponseEntity<Iterable<Vote>> getAll() {
+        log.info("Get all votes");
+        return new ResponseEntity<>(voteService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/by-date")
-    public VoteTo getByDate(@AuthenticationPrincipal AuthUser authUser,
-                            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        log.info("getAll votes for user {} for date {}", authUser.id(), date);
-        return VoteUtil.createTo(repository.getByDate(authUser.id(), date).orElseThrow(
-                () -> new DataConflictException("Vote is not exist for User id=" + authUser.id() + " for date " + date)));
-    }
-
-    @PostMapping
-    public ResponseEntity<Vote> createWithLocation(@AuthenticationPrincipal AuthUser authUser, @RequestParam int restaurantId) {
-        log.info("User {} votes for Restaurant {}", authUser.id(), restaurantId);
-        LocalDate currentDate = LocalDate.now();
-        if (repository.getByDate(authUser.id(), currentDate).isPresent()) {
-            throw new DataConflictException("Only one vote allowed per user");
+    @GetMapping("/{id}")
+    public ResponseEntity<Vote> getVoteById(@PathVariable("id") Integer id) {
+        log.info("Get vote by id: {}", id);
+        Vote vote = voteService.get(id);
+        if (vote != null) {
+            return new ResponseEntity<>(vote, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Vote vote = new Vote(null, null, authUser.getUser(), currentDate);
-        Vote created = voteService.save(vote, restaurantId);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @PutMapping
+    @PutMapping("/vote/{id}")
+    public ResponseEntity<Vote> updateMenu(@PathVariable("id") Integer id, @RequestBody Vote vote) {
+        log.info("Update vote with id: {}, {}", id, vote);
+        Vote updatedVote = voteService.update(vote, id);
+        if (updatedVote != null) {
+            return new ResponseEntity<>(updatedVote, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@AuthenticationPrincipal AuthUser authUser, @RequestParam int restaurantId) {
-        LocalDateTime currentDateTime = LocalDateTime.now(DateTimeUtil.getClock());
-        log.info("User {} votes for Restaurant {}", authUser.id(), restaurantId);
-        Vote vote = repository.getByDate(authUser.id(), currentDateTime.toLocalDate()).orElseThrow(
-                () -> new DataConflictException(String.format("Vote is not found for today for user %s", authUser.getUser().getEmail()))
-        );
-        ValidationUtil.checkTime(currentDateTime.toLocalTime());
-        voteService.save(vote, restaurantId);
+    public void delete(@PathVariable int id) {
+        log.info("Delete vote with id: {}", id);
+        voteService.delete(id);
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
+    public ResponseEntity<Vote> createMenu(@RequestBody Vote vote) {
+        log.info("Create vote: {}", vote);
+        return new ResponseEntity<>(voteService.create(vote), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<List<Vote>> getAllVotesForUser(@PathVariable("userId") Integer userId) {
+        log.info("Get all votes for user with id: {}", userId);
+        List<Vote> votes = voteService.getAllVotesForUser(userId);
+        if (!votes.isEmpty()) {
+            return new ResponseEntity<>(votes, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/users/{userId}/restaurants/{restaurantId}")
+    public ResponseEntity<List<Vote>> getAllVotesForUserAndRestaurant(
+            @PathVariable("userId") Long userId,
+            @PathVariable("restaurantId") Long restaurantId) {
+        log.info("Get all votes for user with id: {} and restaurant with id: {}", userId, restaurantId);
+        List<Vote> votes = voteService.getAllVotesForUserAndRestaurant(userId, restaurantId);
+        if (!votes.isEmpty()) {
+            return new ResponseEntity<>(votes, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

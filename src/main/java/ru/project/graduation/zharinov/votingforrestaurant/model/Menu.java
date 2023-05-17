@@ -1,4 +1,4 @@
-package ru.zharinov.votingforrestaurant.model;
+package ru.project.graduation.zharinov.votingforrestaurant.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;

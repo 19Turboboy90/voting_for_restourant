@@ -5,8 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import ru.project.graduation.zharinov.votingforrestaurant.util.validation.NoHtml;
 import ru.project.graduation.zharinov.votingforrestaurant.HasIdAndEmail;
+import ru.project.graduation.zharinov.votingforrestaurant.util.validation.NoHtml;
+
 
 @Value
 @EqualsAndHashCode(callSuper = true)

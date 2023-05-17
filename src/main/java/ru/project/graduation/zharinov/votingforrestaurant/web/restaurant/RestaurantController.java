@@ -1,51 +1,69 @@
 package ru.project.graduation.zharinov.votingforrestaurant.web.restaurant;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import ru.project.graduation.zharinov.votingforrestaurant.model.Restaurant;
-import ru.project.graduation.zharinov.votingforrestaurant.repository.RestaurantRepository;
+import ru.project.graduation.zharinov.votingforrestaurant.service.RestaurantServiceImpl;
 
-import java.util.List;
 
 @RestController
 @Slf4j
-@AllArgsConstructor
-@RequestMapping(value = RestaurantController.URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class RestaurantController {
-    static final String URL = "/api/restaurants";
+    public static final String REST_URL = "/api/restaurants";
 
-    private final RestaurantRepository repository;
+    private final RestaurantServiceImpl restaurantService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Restaurant> get(@PathVariable int id) {
-        log.info("get restaurant {}", id);
-        return ResponseEntity.of(repository.findById(id));
-    }
-
-    @GetMapping("/{id}/with-dish")
-    public ResponseEntity<Restaurant> getWithMenu(@PathVariable int id) {
-        log.info("get restaurant {} with dish", id);
-        return ResponseEntity.of(repository.getRestaurantWithMenu(id));
-    }
-
-    @GetMapping("/with-dish")
-    @Cacheable("restaurantsWithDish")
-    public List<Restaurant> getAllWithMenu() {
-        log.info("get restaurants with dish");
-        return repository.getAllRestaurantsWithMenu();
+    @Autowired
+    public RestaurantController(RestaurantServiceImpl restaurantService) {
+        this.restaurantService = restaurantService;
     }
 
     @GetMapping
-    public List<Restaurant> getAll() {
-        log.info("get all restaurants");
-        return repository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public ResponseEntity<Iterable<Restaurant>> getAll() {
+        log.info("Get all restaurants");
+        return new ResponseEntity<>(restaurantService.getAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Restaurant> getRestaurantById(@PathVariable("id") Integer id) {
+        log.info("Get restaurant by id: {}", id);
+        Restaurant restaurant = restaurantService.get(id);
+        if (restaurant != null) {
+            return new ResponseEntity<>(restaurant, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/restaurants")
+    public ResponseEntity<Restaurant> createRestaurant(@RequestBody Restaurant restaurant) {
+        log.info("Create restaurant: {}", restaurant);
+        return new ResponseEntity<>(restaurantService.create(restaurant), HttpStatus.CREATED);
+    }
+
+
+    @DeleteMapping(path = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable int id) {
+        log.info("Delete restaurant with id: {}", id);
+        restaurantService.delete(id);
+    }
+
+    @PutMapping("/restaurants/{id}")
+    public ResponseEntity<Restaurant> updateRestaurant(@PathVariable("id") Integer id, @RequestBody Restaurant restaurant) {
+        log.info("Update restaurant with id: {}, {}", id, restaurant);
+        Restaurant updatedRestaurant = restaurantService.update(restaurant, id);
+        if (updatedRestaurant != null) {
+            return new ResponseEntity<>(updatedRestaurant, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

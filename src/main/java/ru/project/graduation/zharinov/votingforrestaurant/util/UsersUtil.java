@@ -1,5 +1,6 @@
 package ru.project.graduation.zharinov.votingforrestaurant.util;
 
+
 import lombok.experimental.UtilityClass;
 import ru.project.graduation.zharinov.votingforrestaurant.model.Role;
 import ru.project.graduation.zharinov.votingforrestaurant.model.User;

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import static ru.project.graduation.zharinov.votingforrestaurant.config.SecurityConfig.PASSWORD_ENCODER;
 
+
 @Transactional(readOnly = true)
 public interface UserRepository extends BaseRepository<User> {
     @Query("SELECT u FROM User u WHERE u.email = LOWER(:email)")

@@ -1,4 +1,4 @@
-package ru.zharinov.votingforrestaurant.model;
+package ru.project.graduation.zharinov.votingforrestaurant.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
