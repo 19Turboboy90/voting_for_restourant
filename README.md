@@ -1,6 +1,6 @@
 Voting for a restaurant
 ================================================
-##  Technical requirement: 
+##  Technical requirement:
 Design and implement a REST API using Hibernate/Spring/SpringMVC (Spring-Boot preferred!) **without frontend**.
 
 The task is:
@@ -13,8 +13,8 @@ Build a voting system for deciding where to have lunch.
 * Users can vote for a restaurant they want to have lunch at today
 * Only one vote counted per user
 * If user votes again the same day:
-    - If it is before 11:00 we assume that he changed his mind.
-    - If it is after 11:00 then it is too late, vote can't be changed
+  - If it is before 11:00 we assume that he changed his mind.
+  - If it is after 11:00 then it is too late, vote can't be changed
 
 Each restaurant provides a new menu each day.
 
@@ -26,4 +26,8 @@ P.P.S.: Assume that your API will be used by a frontend developer to build front
 
 ## Technology stack
 
-**Spring Boot / Spring Data JPA / H2 database / Spring Security / Jackson / Caffeine cache  / Spring Validation / Lombok / Spring Tests / Swagger**
+**Spring Boot / Spring Data JPA / H2 database / Spring Security / Jackson / Spring Validation / Lombok / Spring Tests / Lombok / Swagger**
+
+## Model Project
+
+![modelProject.jpg](modelProject.jpg)
